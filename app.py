@@ -74,4 +74,4 @@ def get_fund_jz(page_num, page_size):
 
 if __name__ == '__main__':
     update_fund_value()
-    logger.info("\nFund valuation updated.")
+    logger.info("\n基金估值已更新.")
