@@ -51,10 +51,6 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - pip:
     - beautifulsoup4==4.8.2
-    - bs4==0.0.1
-    - lxml==4.5.0
-    - simplejson==3.17.0
     - soupsieve==2.0
-    - websocket-client==0.57.0
 prefix: /home/peng/dev/anaconda3/envs/my-fund
 

@@ -8,7 +8,7 @@ import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 logger = logging.getLogger("app")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 logger.addHandler(console_handler)
 
@@ -44,8 +44,9 @@ def get_url(url, params=None, proxies=None):
 def get_fund_valuation(code):
     ts = get_timestamp()
     url = F"http://fundgz.1234567.com.cn/js/{code}.js?rt={ts}"
-    json_data = json.loads(get_url(url)[8:-2])
-    logger.info(F"{datetime.datetime.now()}: {json_data['jzrq']} {json_data['name']}<{code}> -> {json_data['gsz']} ")
+    content = get_url(url)[8:-2]
+    json_data = json.loads(content)
+    logger.debug(F"{datetime.datetime.now()}: {content} ")
     return json_data
 
 
@@ -84,6 +85,9 @@ def add_schedule_jobs():
     scheduler.add_job(get_fund_val, "cron", hour='9-11', minute=30, id='get_fund_val1')
     scheduler.add_job(get_fund_val, "cron", hour='13-14', minute=10, id='get_fund_val2')
     scheduler.add_job(get_fund_val, "cron", hour='22-23', minute=30, id='get_fund_val3')
+    # just for debug
+    # scheduler.add_job(get_fund_val, "interval", minutes=1, id='get_fund_val4')
+
 
 
 if __name__ == '__main__':
