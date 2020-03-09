@@ -13,7 +13,10 @@ logger.addHandler(console_handler)
 
 excel_file = '/home/peng/文档/fund/Fund.xlsx'
 
+# Server酱 key http://sc.ftqq.com/
 sckey = 'SCU88470T2b933a481a8f217a209c8482c05e0f535e64b2a99dff4'
+
+# 聚合接口 key https://www.juhe.cn/docs/api/id/25
 jvhe_key = 'd91966e95b003374d512c746a805af69'
 
 
