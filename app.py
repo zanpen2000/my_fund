@@ -20,12 +20,14 @@ sckey = 'SCU88470T2b933a481a8f217a209c8482c05e0f535e64b2a99dff4'
 # 聚合接口 key https://www.juhe.cn/docs/api/id/25
 jvhe_key = 'd91966e95b003374d512c746a805af69'
 
+scheduler = BlockingScheduler()
+
 
 def send_msg(title, text):
     msg_push_url = F"https://sc.ftqq.com/{sckey}.send?text={title}&desp={text}"
     resp = requests.get(msg_push_url)
     logger.debug(resp)
-    logger.info("已将消息推送到微信")
+    logger.info(F"{datetime.datetime.now()}: 已将消息推送到微信")
 
 
 def get_timestamp():
@@ -42,9 +44,8 @@ def get_url(url, params=None, proxies=None):
 def get_fund_valuation(code):
     ts = get_timestamp()
     url = F"http://fundgz.1234567.com.cn/js/{code}.js?rt={ts}"
-    now = datetime.datetime.now()
     json_data = json.loads(get_url(url)[8:-2])
-    logger.info(F"{now}: {json_data['jzrq']} {json_data['name']}<{code}> -> {json_data['dwjz']} ")
+    logger.info(F"{datetime.datetime.now()}: {json_data['jzrq']} {json_data['name']}<{code}> -> {json_data['gsz']} ")
     return json_data
 
 
@@ -69,20 +70,23 @@ def update_fund_value():
     wb.save(excel_file)
     wb.close()
     if len(green_fund_list) > 0:
-        send_msg('以下基金估算净值低于成本单价', '\r\n'.join(green_fund_list))
+        send_msg(F'共有{len(green_fund_list)}只基金估算净值低于成本单价', '\r\n'.join(green_fund_list))
 
 
-# todo: 获取净值数据
-def get_fund_jz(page_num, page_size):
-    url = F"http://v.juhe.cn/jingzhi/query.php?page={page_num}&pagesize={page_size}&type=all&key={jvhe_key}"
-    pass
+def get_fund_val():
+    """判断是否交易日，是否交易时间，然后获取估值信息"""
+    import tradeday
+    if tradeday.today_is_trade_day():
+        update_fund_value()
 
 
-def schedule_job():
-    scheduler = BlockingScheduler()
-    scheduler.add_job(update_fund_value, "interval", seconds=10, id='update_fund_value')
-    scheduler.start()
+def add_schedule_jobs():
+    scheduler.add_job(get_fund_val, "cron", hour='9-11', minute=30, id='get_fund_val1')
+    scheduler.add_job(get_fund_val, "cron", hour='13-14', minute=10, id='get_fund_val2')
+    scheduler.add_job(get_fund_val, "cron", hour='22-23', minute=30, id='get_fund_val3')
 
 
 if __name__ == '__main__':
-    schedule_job()
+    logger.info(F"{datetime.datetime.now()}: 定时任务已启动，将分别在9:30,10:30,11:30,13:10,14:10,22:30,23:30获取持仓基金估值信息")
+    add_schedule_jobs()
+    scheduler.start()
