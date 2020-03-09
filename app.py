@@ -89,7 +89,6 @@ def add_schedule_jobs():
     # scheduler.add_job(get_fund_val, "interval", minutes=1, id='get_fund_val4')
 
 
-
 if __name__ == '__main__':
     logger.info(F"{datetime.datetime.now()}: 定时任务已启动，将分别在9:30,10:30,11:30,13:10,14:10,22:30,23:30获取持仓基金估值信息")
     add_schedule_jobs()
