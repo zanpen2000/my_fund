@@ -67,7 +67,7 @@ def update_fund_value():
     send_msg('以下基金估算净值低于成本单价', '\r\n'.join(green_fund_list))
 
 
-def get_fund_jz():
+def get_fund_jz(page_num, page_size):
     url = F"http://v.juhe.cn/jingzhi/query.php?page={page_num}&pagesize={page_size}&type=all&key={jvhe_key}"
     pass
 
