@@ -5,13 +5,14 @@ import openpyxl
 import requests
 import time
 import logging
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 logger = logging.getLogger("app")
 logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
 logger.addHandler(console_handler)
 
-excel_file = '/home/peng/文档/fund/Fund.xlsx'
+excel_file = './Fund.xlsx'
 
 # Server酱 key http://sc.ftqq.com/
 sckey = 'SCU88470T2b933a481a8f217a209c8482c05e0f535e64b2a99dff4'
@@ -67,14 +68,21 @@ def update_fund_value():
 
     wb.save(excel_file)
     wb.close()
-    send_msg('以下基金估算净值低于成本单价', '\r\n'.join(green_fund_list))
+    if len(green_fund_list) > 0:
+        send_msg('以下基金估算净值低于成本单价', '\r\n'.join(green_fund_list))
 
 
+# todo: 获取净值数据
 def get_fund_jz(page_num, page_size):
     url = F"http://v.juhe.cn/jingzhi/query.php?page={page_num}&pagesize={page_size}&type=all&key={jvhe_key}"
     pass
 
 
+def schedule_job():
+    scheduler = BlockingScheduler()
+    scheduler.add_job(update_fund_value, "interval", seconds=10, id='update_fund_value')
+    scheduler.start()
+
+
 if __name__ == '__main__':
-    update_fund_value()
-    logger.info("\n基金估值已更新.")
+    schedule_job()
