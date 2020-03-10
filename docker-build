@@ -1,0 +1,5 @@
+docker stop myfund
+docker rm myfund
+conda env export > environment.yml
+
+docker build -t myfund .

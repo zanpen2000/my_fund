@@ -3,7 +3,8 @@ FROM continuumio/miniconda:latest
 WORKDIR /home/my-fund
 
 COPY environment.yml ./
-COPY app.py ./
+COPY *.py ./
+COPY Fund.xlsx ./
 COPY boot.sh ./
 
 RUN chmod +x boot.sh
