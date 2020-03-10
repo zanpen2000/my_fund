@@ -87,7 +87,7 @@ def add_schedule_jobs():
     scheduler.add_job(get_fund_val, "cron", hour='22-23', minute=30, id='get_fund_val3')
     # just for debug
     #scheduler.add_job(get_fund_val, "interval", minutes=10, id='get_fund_val4')
-    scheduler.add_job(get_fund_val, "interval", seconds=30, id='get_fund_val4')
+    #scheduler.add_job(get_fund_val, "interval", seconds=30, id='get_fund_val4')
 
 
 if __name__ == '__main__':
