@@ -19,8 +19,8 @@ def today_is_trade_day():
 def in_time_range(ranges):
     now = time.strptime(time.strftime("%H%M%S"), "%H%M%S")
     ranges = ranges.split(",")
-    for range in ranges:
-        r = range.split("-")
+    for r in ranges:
+        r = r.split("-")
         if time.strptime(r[0], "%H%M%S") <= now <= time.strptime(r[1], "%H%M%S") or \
                 time.strptime(r[0], "%H%M%S") >= now >= time.strptime(r[1], "%H%M%S"):
             return True
