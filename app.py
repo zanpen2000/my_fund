@@ -53,21 +53,36 @@ def get_fund_valuation(code):
 def update_fund_value():
     wb = openpyxl.load_workbook(excel_file)
     sheet = wb['基金']
-    green_fund_list = ["|名称|成本单价|估值|跌幅|", "| :---- | :-------- | ----: | ---: |"]
+
+    fund_list = []
     for r in sheet.rows:
         fund_code = str(r[0].value)
-        if fund_code[0] in '0123456789':
-            data = get_fund_valuation(fund_code)  # get val and write back
-            from openpyxl.styles import numbers, colors, Font, PatternFill
-            r[4].number_format = r[7].number_format = r[8].number_format = numbers.FORMAT_GENERAL
-            r[9].number_format = numbers.FORMAT_PERCENTAGE_00
 
-            r[7].value, r[8].value, r[9].value = float(data['dwjz']), float(data['gsz']), float(data['gszzl']) / 100
+        if not fund_code[0] in '0123456789': continue
 
-            if r[4].value > r[8].value:
-                p = str(round(float((((r[8].value - r[4].value) / r[4].value) * 100)), 2)) + '%'
-                line = F"|{r[1].value} | {r[4].value} | {r[8].value}| {p} "
-                green_fund_list.append(line)
+        data = get_fund_valuation(fund_code)  # get val and write back
+        from openpyxl.styles import numbers, colors, Font, PatternFill
+        r[4].number_format = r[7].number_format = r[8].number_format = numbers.FORMAT_GENERAL
+        r[9].number_format = numbers.FORMAT_PERCENTAGE_00
+
+        r[7].value, r[8].value, r[9].value = float(data['dwjz']), float(data['gsz']), float(data['gszzl']) / 100
+
+        if r[4].value > r[8].value:
+            percent = round(float((((r[8].value - r[4].value) / r[4].value) * 100)), 2) 
+            fund_list.append((r[0].value,r[1].value, r[4].value, r[8].value, percent))
+
+    fund_list = sorted(fund_list,key=lambda x: x[4])
+
+    green_fund_list = ["|名称|成本单价|估值|跌幅|", "| :---- | :-------- | ----: | ---: |"]
+    for el in fund_list:
+        percent = el[4]
+        if percent <-5:
+            p = '<span style="color:red;">' + str(percent) + '</span>'
+        else:
+            p = str(percent) 
+        line = F"|{el[1]} | {el[2]} | {el[3]}| {p} "
+        green_fund_list.append(line)
+
 
     wb.save(excel_file)
     wb.close()
