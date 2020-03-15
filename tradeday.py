@@ -8,7 +8,11 @@ def is_trade_day(query_date):
     url = F"http://tool.bitefu.net/jiari/?d={query_date}"
     resp = requests.get(url=url)
     content = resp.text
-    return int(content) == 0
+    try:
+        return int(content) == 0
+    except:
+        time.sleep(5)
+        return today_is_trade_day()
 
 
 def today_is_trade_day():
